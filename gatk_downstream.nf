@@ -81,7 +81,7 @@ process vcftoolsSiteFilter {
 	val site_filters from params.vcftools_site_filters
 	
 	output:
-	tuple path("${raw_vcf.baseName[0..-5]}.vcftools.tmp"), path(raw_vcf), path("${raw_vcf.baseName[0..-5]}.vcftools.vcf.gz"  into vcftools_vcf_ch
+	tuple path("${raw_vcf.baseName[0..-5]}.vcftools.tmp"), path(raw_vcf), path("${raw_vcf.baseName[0..-5]}.vcftools.vcf.gz")  into vcftools_vcf_ch
 	
 	script:
 	if (site_filters == "NULL")
