@@ -170,7 +170,7 @@ process sanityCheckLogsGatk {
 	path "${filtvcflog.baseName[0..-5]}.OK.vcf.gz" optional true into gatk_ok_vcf_ch
 	
 	"""
-	logstats.sh $logfile $allvcflog $filtvcflog 1 $min_filt_contig_length > ${logfile.simpleName}.log
+	logstats.sh $logfile $allvcflog $filtvcflog 1 $min_filt_contig_length > ${logfile.baseName}.log
 	"""
 	
 }
