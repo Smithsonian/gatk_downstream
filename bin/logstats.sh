@@ -19,7 +19,7 @@
 
 logval=`tail -n2 $1 | head -n1`
 if [[ $logval == 'No data left for analysis!' ]]; then
-	$logval = =`tail -n3 $1 | head -n1`
+	logval=`tail -n3 $1 | head -n1`
 fi
 if [[ $logval == 'File does not contain any sites' ]]; then
 	bcftools stats <(gunzip -c $2) > tmp.txt
