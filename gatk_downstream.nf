@@ -184,7 +184,7 @@ process concatenateVCFs {
 	
 	input:
 	path chrfile from chrfile_ch2
-	path "*.vcf.gz" from gatk_ok_vcf_ch.collect()
+	path "*" from gatk_ok_vcf_ch.collect()
 	val stem from params.stem
 	
 	output:
