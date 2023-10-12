@@ -70,6 +70,8 @@ process genMapMap {
 
 	// Calculate mappability using GenMap and filter using filterGM.  From RatesTools 0.5.16
 	
+	publishDir "$params.outdir/06_MapFiltVCF", mode: 'copy'
+	
 	input:
 	path refseq from params.refseq
 	path genmap_index from genmap_index_ch
@@ -80,7 +82,8 @@ process genMapMap {
 	
 	"""
 	genmap map -K 30 -E 2 -T ${task.cpus} -I ${refseq.simpleName}_index/ -O ${refseq.simpleName}_genmap -b
-	filterGM.rb ${refseq.simpleName}_genmap.bed 1.0 exclude > ${refseq.simpleName}_genmap.1.0.bed
+	filterGM.rb ${refseq.simpleName}_genmap.bed 1.0 exclude > tmp.bed
+	bedtools merge -i tmp.bed > ${refseq.simpleName}_genmap.1.0.bed
 	"""
 }
 
@@ -259,8 +262,7 @@ process filterMappability {
 	path "${stem}.map.vcf.gz"
 	
 	"""
-	bedtools merge -i $bed > tmp.bed
-	bedtools subtract -a $vcf -b tmp.bed -header | gzip > ${stem}.map.vcf.gz
+	bedtools subtract -a $vcf -b $bed -header | gzip > ${stem}.map.vcf.gz
 	"""
 
 }	
