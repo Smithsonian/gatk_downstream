@@ -281,6 +281,7 @@ process snpRelate {
 	output:
 	path "${stem}.gds"
 	path "${stem}*.csv"
+	path "${stem}.snprelate.log"
 	
 	"""
 	#!/usr/bin/env Rscript
@@ -291,6 +292,7 @@ process snpRelate {
 	pruned <- snpgdsLDpruning(snps, $snprelate_opts)
 	bootstrapped <- bootstrap.kinship(snps, ibdmethod = "MLE", $snprelate_opts)
 	write.kinship.matrix(bootstrapped, meanfile = \"${stem}_bootstrap_meanvalues.csv\", \"${stem}_random_kinship_CI.csv\")
+	cp .command.log ${stem}.snprelate.log
 	"""
 
 }
