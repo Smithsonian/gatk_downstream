@@ -285,9 +285,8 @@ process snpRelate {
 	"""
 	#!/usr/bin/env Rscript
 	library("SNPRelate")
-	system("pwd")
 	source(system("which kinshipUtils.R", intern = TRUE))
-	snpgdsVCF2GDS(Sys.readlink($vcf), ${stem}.gds, method = "biallelic.only")
+	snpgdsVCF2GDS(Sys.readlink(\'$vcf\'), ${stem}.gds, method = "biallelic.only")
 	snps <- snpgdsOpen(${stem}.gds)
 	pruned <- snpgdsLDpruning(snps, $snprelate_opts)
 	bootstrapped <- bootstrap.kinship(snps, ibdmethod = "MLE", $snprelate_opts)
