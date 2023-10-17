@@ -259,7 +259,7 @@ process filterMappability {
 	val stem from params.stem
 	
 	output:
-	path "${stem}.map.vcf.gz" into map_vcf_ch
+	path "${stem}.map.vcf.gz" into map_vcf_ch,map_vcf_ch2
 	
 	"""
 	bedtools subtract -a $vcf -b $bed -header | gzip > ${stem}.map.vcf.gz
@@ -299,6 +299,28 @@ process snpRelate {
 	save.image(file = \"${stem}.Rdata\")
 	"""
 
+}
+
+process ngsRelate {
+
+	// Estimate kinship using ngsRelate
+	// Requires local compilation and installation of ngsRelate v2 commit ec95c8f built with htslib v 1.18 commit 99415e2
+	
+	publishDir "$params.outdir/08_ngsRelate", mode: 'copy'
+	
+	input:
+	path vcf from map_vcf_ch2
+	val stem from params.stem
+	val ngsrelate_opts from params.ngsrelate_opts
+	
+	output:
+	path "${stem}.ngsRelate.res"
+	
+	"""
+	zgrep -m1 '#CHROM' african.map.vcf.gz | cut -f10- | sed "s/\t/\n/g" > sampleids.txt
+	ngsRelate -h $vcf -O ${stem}.ngsRelate.res $ngsrelate_opts -p ${task.cpus} -z sampleids.txt
+	"""
+	
 }
 	
 	
