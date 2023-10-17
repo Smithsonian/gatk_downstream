@@ -317,7 +317,7 @@ process ngsRelate {
 	path "${stem}.ngsRelate.res"
 	
 	"""
-	zgrep -m1 '#CHROM' african.map.vcf.gz | cut -f10- | sed "s/\t/\n/g" > sampleids.txt
+	zgrep -m1 '#CHROM' african.map.vcf.gz | cut -f10- | sed "s/\\t/\\n/g" > sampleids.txt
 	ngsRelate -h $vcf -O ${stem}.ngsRelate.res $ngsrelate_opts -p ${task.cpus} -z sampleids.txt
 	"""
 	
