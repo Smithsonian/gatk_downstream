@@ -296,7 +296,7 @@ process snpRelate {
 	bootstrapped <- bootstrap.kinship(snps, ibdmethod = "MLE", $snprelate_opts, num.thread = ${task.cpus}, ld.threshold = $snprelate_ld)
 	write.kinship.matrix(bootstrapped, meanfile = \"${stem}_bootstrap_meanvalues.csv\", cifile = \"${stem}_random_kinship_CI.csv\")
 	system(\"cp .command.log ${stem}.snprelate.log\")
-	save(\"${stem}.Rdata\")
+	save.image(file = \"${stem}.Rdata\")
 	"""
 
 }
