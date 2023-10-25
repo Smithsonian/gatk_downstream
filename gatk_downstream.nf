@@ -144,6 +144,9 @@ process sanityCheckLogsVcftools {
 
 	// Sanity check logs for VCFtools site filtering and remove too short contigs
 	// Modified from RatesTools 0.5.15: Armstrong & Campana 2023
+	
+	errorStrategy { task.attempt < 4 ? 'retry' : 'finish' }
+	maxRetries 3
 
 	input:
 	tuple path(logfile), path(allvcflog), path(filtvcflog) from vcftools_vcf_ch
@@ -202,6 +205,9 @@ process sanityCheckLogsGatk {
 	// Sanity check logs for GATK site filtering and remove too short contigs
 	// Dummy value of 1 for min_contig_length since already evaluated and no longer accurate
 	// Modified from RatesTools 0.5.15: Armstrong & Campana 2023
+	
+	errorStrategy { task.attempt < 4 ? 'retry' : 'finish' }
+	maxRetries 3
 
 	input:
 	tuple path(logfile), path(allvcflog), path(filtvcflog) from gatk_vcf_ch
