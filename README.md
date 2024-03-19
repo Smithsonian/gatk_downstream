@@ -1,5 +1,5 @@
 # gatk_downstream  
-<img justfy="right" src="NZP-20180628-509SB_thumb.jpg"  
+<img align="right" src="NZP-20180628-509SB_thumb.jpg">  
 
 Michael G. Campana, 2023-2024  
 Smithsonian's National Zoo & Conservation Biology Institute  
