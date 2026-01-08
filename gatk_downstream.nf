@@ -104,32 +104,6 @@ process genMapMap {
 	"""
 }
 
-process jointGenotype {
-
-	// Joint-genotype gVCFs
-	
-	publishDir "$params.outdir/02_RawChrVCFs", mode: 'copy'
-	
-	input:
-	path db from genomicsdb_ch
-	path refseq from params.refseq
-	path fai from params.refseq_fai
-	path dict from params.refseq_dict
-	
-	output:
-	path "${db.baseName}.vcf.gz" into raw_vcf_ch
-	
-	"""
-	tar xfz $db
-	$gatk GenotypeGVCFs -R $refseq -V gendb://${db.baseName} -O ${db.baseName}.vcf
-	bgzip ${db.baseName}.vcf
-	rm -r ${db.baseName}
-	"""
-
-}
-
-
-
 workflow.onComplete {
 	if (workflow.success) {
 		println "Joint-genotyping pipeline completed successfully at $workflow.complete!"
