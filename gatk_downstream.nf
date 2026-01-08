@@ -1,26 +1,47 @@
 #!/usr/bin/env nextflow
 
+/* GATK Joint-Genotyping Pipeline version 0.2.0
+Michael G. Campana, 2023-2026
+Smithsonian\'s National Zoo and Conservation Biology Institute
+
+The software is made available under the Smithsonian Institution terms of use (https://www.si.edu/termsofuse). */
+
 gatk = 'gatk --java-options "' + params.java_options + '" ' // Simplify gatk command line
 
 nextflow.enable.dsl=1
 
-process extractChrNames {
-
-	// Extract chromosome names from reference sequence
+process refDictFai {
+	
+	// Prepare nuclear reference sequence dict and fai indices
 	
 	input:
-	path refseq from params.refseq
+	path refseq
 	
 	output:
-	path "${refseq.baseName}.chr.txt" into chrfile_ch, chrfile_ch2
+	path "${refseq.baseName}*.{fai,dict}"
+
+	"""
+	samtools faidx ${refseq}
+	samtools dict ${refseq} > ${refseq.baseName}.dict
+	"""
+
+}
+
+process extractChrNames {
+
+	// Extract chromosome names from reference sequence to use all chromosomes
+	
+	input:
+	path refseq
+	
+	output:
+	path "${refseq.baseName}.chr.txt"
 	
 	"""
 	grep '>' $refseq | sed 's/>//g' | cut -f1 -d ' ' > ${refseq.baseName}.chr.txt
 	"""
 
 }
-
-chr_ch = chrfile_ch.flatten().splitText(by: 1).map { it.replaceAll(/\n/, "") }
 
 process createGenomicsDB {
 
@@ -29,12 +50,12 @@ process createGenomicsDB {
 	publishDir "$params.outdir/01_ChrGenomicsDBs", mode: 'copy'
 	
 	input:
-	path gvcfs from params.gvcfs
-	val chr from chr_ch
-	val stem from params.stem
+	path gvcfs
+	val chr
+	val stem
 	
 	output:
-	path "${stem}_${chr}.tgz" into genomicsdb_ch
+	path "${stem}_${chr}.tgz"
 	
 	"""
 	VARPATH=""
@@ -47,16 +68,16 @@ process createGenomicsDB {
 
 process genMapIndex {
 
-	// Generate GenMap index. From RatesTools 0.5.16
-
+	// Generate GenMap index. From RatesTools 1.2.4
 	
+	label 'genmap'
+		
 	input:
-	path refseq from params.refseq
-	val gm_tmpdir from params.gm_tmpdir
+	path refseq
+	val gm_tmpdir
 	
 	output:
-	path "${refseq.simpleName}_index" into genmap_index_ch
-	path "${refseq.simpleName}_index/*" into genmap_index_files_ch
+	tuple path("$refseq"), path("${refseq.simpleName}_index"), path("${refseq.simpleName}_index/*")
 	
 	"""
 	export TMPDIR=${gm_tmpdir}
@@ -68,22 +89,20 @@ process genMapIndex {
 
 process genMapMap {
 
-	// Calculate mappability using GenMap and filter using filterGM.  From RatesTools 0.5.16
+	// Calculate mappability using GenMap and filter using filterGM. From RatesTools 1.2.4
 	
-	publishDir "$params.outdir/06_MapFiltVCF", mode: 'copy'
-	
+	label 'genmap'
+	label 'ruby'
+		
 	input:
-	path refseq from params.refseq
-	path genmap_index from genmap_index_ch
-	path '*' from genmap_index_files_ch
+	tuple path(refseq), path(genmap_index), path("*")
 	
 	output:
-	path "${refseq.simpleName}_genmap.1.0.bed" into genmap_ch
+	path "${refseq.simpleName}_genmap.1.0.bed"
 	
 	"""
-	genmap map -K 30 -E 2 -T ${task.cpus} -I ${refseq.simpleName}_index/ -O ${refseq.simpleName}_genmap -b
-	filterGM.rb ${refseq.simpleName}_genmap.bed 1.0 exclude > tmp.bed
-	bedtools merge -i tmp.bed > ${refseq.simpleName}_genmap.1.0.bed
+	genmap map ${params.gm_opts} -T ${task.cpus} -I ${refseq.simpleName}_index/ -O ${refseq.simpleName}_genmap -b
+	filterGM.rb ${refseq.simpleName}_genmap.bed 1.0 exclude > ${refseq.simpleName}_genmap.1.0.bed
 	"""
 }
 
@@ -322,8 +341,6 @@ process ngsRelate {
 	"""
 	
 }
-	
-	
 
 workflow.onComplete {
 	if (workflow.success) {
@@ -338,3 +355,18 @@ workflow.onComplete {
 		}
 	}
 }
+
+workflow {
+	main:
+		refFaiDict(params.refseq)
+		if (params.chrlist == "NULL") {
+			extractChrNames(params.refseq)
+			chr_ch = extractChrNames.out.flatten().splitText(by: 1).map { it.replaceAll(/\n/, "")
+		} else {
+			chr_ch = channel.fromPath(params.chrlist).flatten().splitText(by: 1).map { it.replaceAll(/\n/, "")
+		}
+		chr_ch.view()
+		//createGenomicsDB(params.gvcfs, chr_ch, params.stem)
+}
+
+	
