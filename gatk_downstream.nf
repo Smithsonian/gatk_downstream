@@ -8,8 +8,6 @@ The software is made available under the Smithsonian Institution terms of use (h
 
 gatk = 'gatk --java-options "' + params.java_options + '" ' // Simplify gatk command line
 
-nextflow.enable.dsl=1
-
 process refDictFai {
 	
 	// Prepare nuclear reference sequence dict and fai indices
