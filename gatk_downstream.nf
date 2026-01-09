@@ -331,27 +331,27 @@ workflow.onComplete {
 }
 
 workflow logVcftoolsSanity {
-	// Sanity check logs from VCFtools site filtering. From RatesTools 1.2.4
+	// Sanity check logs from VCFtools site filtering. Modified from RatesTools 1.2.4
 	take:
 		tmpfile
 		rawvcf
 		filtvcf
 	main:
-		sanityCheckLogs(tmpfile, rawvcf, filtvcf, params.min_contig_length, params.min_filt_contig_length)
+		sanityCheckLogs(tmpfile, rawvcf, filtvcf, params.min_contig_vars, params.min_filt_contig_vars)
 	emit:
 		sanelog = sanityCheckLogs.out.log
 		ok_vcf = sanityCheckLogs.out.ok_vcf
 }
 
 workflow logGatkSanity {
-	// Sanity check logs for GATK site filtering and remove too short contigs. From RatesTools 1.2.4
-	// Dummy value of 1 for min_contig_length since already evalutated and no longer accurate
+	// Sanity check logs for GATK site filtering and remove too short contigs. Modified from RatesTools 1.2.4
+	// Dummy value of 1 for min_contig_vars since already evalutated and no longer accurate
 	take:
 		tmpfile
 		rawvcf
 		filtvcf
 	main:
-		sanityCheckLogs(tmpfile, rawvcf, filtvcf, 1, params.min_filt_contig_length)
+		sanityCheckLogs(tmpfile, rawvcf, filtvcf, 1, params.min_filt_contig_vars)
 	emit:
 		sanelog = sanityCheckLogs.out.log
 		ok_vcf = sanityCheckLogs.out.ok_vcf
