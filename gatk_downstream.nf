@@ -180,7 +180,6 @@ process sanityCheckLogs {
 	
 }
 	
-	
 process gatkSiteFilter {
 
 	// Perform GATK site filters on VCFs
@@ -190,7 +189,7 @@ process gatkSiteFilter {
 	
 	input:
 	path vcftools_vcf
-	path refseq from params.refseq
+	path refseq
 	path "*"
 	
 	output:
