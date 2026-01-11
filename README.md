@@ -1,7 +1,7 @@
 # gatk_downstream  
 <img align="right" src="NZP-20180628-509SB_thumb.jpg">  
 
-Michael G. Campana, 2023-2025  
+Michael G. Campana, 2023-2026  
 Smithsonian's National Zoo & Conservation Biology Institute  
 
 Nextflow pipeline [1] for joint-genotyping and variant filtration using the Genome Analysis Toolkit [2] and VCFtools [3]. The pipeline also removes variants from difficult-to-align regions using GenMap [4], scripts from RatesTools [5], and BEDTools [6]. Kinship estimation is performed using SNPRelate [7] (with bootstrapping from kinshipUtils [8]) and ngsRelateV2 [9].  
@@ -22,25 +22,24 @@ The `nextflow.config` file included with this repository contains a standard pro
 `outdir`: Path to the output directory  
 `stem`: Stem for output file names  
 `refseq`: Path to the genome reference sequence  
-`refseq_fai`: Path to the reference sequence FAI index  
-`refseq_dict`: Path to the reference sequence DICT dictionary  
 `gvcfs`: Path to directory of per-individual gVCFs (e.g as output via the [campanam/Elephants](https://github.com/campanam/Elephants) pipeline)  
+`chrlist`: Path to list of chr to genotype. Set to "NULL" to use all chromosomes.  
 `java_options`: String of options for Java executables.  
 `vcftools_site_filters`: Site filters to pass to VCFtools. Set to "NULL" to ignore this filter.  
 `gatk_site_filters`: Site filters to pass to GATK. Set to 'NULL' to ignore this filter.  
 `min_contig_vars`: Minimum number of variants on a contig (before filtering) to retain in analysis  
 `min_filt_contig_vars`: Minimum number of variants on a contig (after filtering) to retain in analysis  
 `gm_tmpdir`: Scratch directory for GenMap indexing  
+`gm_opts`: Specifies mapping parameters (as a string) for GenMap. Use cpus in the process configuration to set number of concurrent threads.  
 `snprelate_ld`: LD-threshold for SNPRelate  
 `snprelate_opts`: String of other SNPRelate options (excluding LD-threshold)  
 `ngsrelate_opts`: String of options for ngsRelateV2 (other than number of threads)  
 `email`: Email to send completion status to. Set to "NULL" for no email.  
 
 ## Executing the Pipeline  
-*NB: The gatk_downstream pipeline is written in Nextflow DSL1 and is therefore not compatible with Nextflow versions > 22.10.4*  
 
 Execute the pipeline using the following command:  
-`NXF_VER=22.10.4 nextflow run campanam/gatk_downstream -r main -c <config_file.config> -profile standard`  
+`nextflow run campanam/gatk_downstream -r main -c <config_file.config> -profile standard`  
 
 ## References  
 1. Di Tommaso, P., Chatzou, M., Floden, E.W., Prieto Barja, P., Palumbo, E., Notredame, C. (2017) Nextflow enables reproducible computational workflows. *Nat Biotechnol*, __35__, 316–319. DOI: [10.1038/nbt.3820](https://www.nature.com/articles/nbt.3820).  
