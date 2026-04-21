@@ -8,7 +8,7 @@ Nextflow pipeline [1] for joint-genotyping and variant filtration using the Geno
 
 ## Citation  
 Please cite:  
-Gregory, J.T., Maldonado, J.E., Brown, J.L., McInerney, N.R., Campana, M.G., Prado, N.A. In prep. Integrating genomics and endocrinology to investigate hyperprolactinemia in African savannah elephants (*Loxodonta africana*) housed in North American zoos.  
+Gregory, J.T., Maldonado, J.E., Brown, J.L., McInerney, N.R., Rogers, R., Campana, M.G., Prado, N.A. In prep. Integrating genomics and endocrinology to investigate hyperprolactinemia in female African savannah elephants (*Loxodonta africana*) housed in North American zoos.  
 
 ## License  
 This software is licensed under the Smithsonian Institution [terms of use](https://www.si.edu/termsofuse).  
