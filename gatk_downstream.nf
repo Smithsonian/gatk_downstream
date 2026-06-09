@@ -138,9 +138,8 @@ process vcftoolsSiteFilter {
 	path raw_vcf
 	
 	output:
-	path("${raw_vcf.baseName[0..-5]}.vcftools.tmp")
-	path(raw_vcf)
-	path("${raw_vcf.baseName[0..-5]}.vcftools.vcf.gz")
+	path("${raw_vcf.baseName[0..-5]}.vcftools.tmp"), emit: tmp
+	path("${raw_vcf.baseName[0..-5]}.vcftools.vcf.gz"), emit:vcf
 	
 	script:
 	if (params.vcftools_site_filters == "NULL")
@@ -193,9 +192,8 @@ process gatkSiteFilter {
 	path "*"
 	
 	output:
-	path("${vcftools_vcf.baseName[0..-17]}.gatk.tmp")
-	path(vcftools_vcf)
-	path("${vcftools_vcf.baseName[0..-17]}.gatk.vcf.gz")
+	path("${vcftools_vcf.baseName[0..-17]}.gatk.tmp"), emit: tmp
+	path("${vcftools_vcf.baseName[0..-17]}.gatk.vcf.gz"), emit: vcf
 	
 	script:
 	if (params.gatk_site_filters == "NULL")
@@ -369,8 +367,10 @@ workflow {
 			chr_ch = channel.fromPath(params.chrlist).flatten().splitText(by: 1).map { it.replaceAll(/\n/, "") }
 		}
 		createGenomicsDB(params.gvcfs, chr_ch, params.stem)
-		jointGenotype(createGenomicsDB.out, params.refseq, refDictFai.out) | vcftoolsSiteFilter | logVcftoolsSanity
-		gatkSiteFilter(logVcftoolsSanity.out.ok_vcf, params.refseq, refDictFai.out) | logGatkSanity
+		jointGenotype(createGenomicsDB.out, params.refseq, refDictFai.out) | vcftoolsSiteFilter
+		logVcftoolsSanity(vcftoolsSiteFilter.out.tmp, jointGenotype.out, vcftoolsSiteFilter.out.vcf) 
+		gatkSiteFilter(logVcftoolsSanity.out.ok_vcf, params.refseq, refDictFai.out) 
+		logGatkSanity(gatkSiteFilter.out.tmp,logVcftoolsSanity.out.ok_vcf, gatkSiteFilter.out.vcf)
 		if (params.chrlist == "NULL") {
 			concatenateVCFs(extractChrNames.out, logGatkSanity.out.ok_vcf.collect())
 		} else {
