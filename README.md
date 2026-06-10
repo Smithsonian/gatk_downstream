@@ -8,14 +8,14 @@ Nextflow pipeline [1] for joint-genotyping and variant filtration using the Geno
 
 ## Citation  
 Please cite:  
-Gregory, J.T., Maldonado, J.E., Brown, J.L., McInerney, N.R., Rogers, R., Campana, M.G., Prado, N.A. In prep. Integrating genomics and endocrinology to investigate hyperprolactinemia in female African savannah elephants (*Loxodonta africana*) housed in North American zoos.  
+Gregory, J.T., Maldonado, J.E., Brown, J.L., McInerney, N.R., Rogers, R., Campana, M.G., Prado, N.A. In prep. Integrating genomics and endocrinology to investigate hyperprolactinemia in female African savannah elephants housed in North American zoos.  
 
 ## License  
 This software is licensed under the Smithsonian Institution [terms of use](https://www.si.edu/termsofuse).  
 
 ## Installation  
 After installing [Nextflow](https://www.nextflow.io/) and [Conda](https://docs.conda.io/en/latest/), download the pipeline using:  
-`nextflow pull campanam/Elephants`  
+`nextflow pull campanam/gatk_downstream`  
 
 ## Configuring the Pipeline  
 The `nextflow.config` file included with this repository contains a standard profile for running the pipeline locally. See the Nextflow documentation for assistance in generating a configuration profile for your computing system. The parameters you will need to provide to execute the pipeline are listed in the `params` block. These are:  
